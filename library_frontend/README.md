@@ -1,82 +1,82 @@
-# Lightweight React Template for KAVIA
+# Library Frontend (Library Explorer)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A React-based frontend for browsing, searching, and viewing information about books, authors, and library services.
 
 ## Features
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+- Ocean Professional theme via CSS variables
+- Client-side routing (react-router-dom v6)
+- Pages: Home, Books, Book Details, Authors, Author Details, Services, Not Found
+- Shared components: Navbar, Footer, SearchBar, BookCard, Paginator
+- API client with environment-based base URL resolution
+- Graceful handling when backend is unreachable (optional healthcheck banner)
+- Accessibility: skip links, aria labels, keyboard focus styles
+- Basic tests for routing and search flows
 
 ## Getting Started
 
-In the project directory, you can run:
+Install dependencies and run the app:
 
-### `npm start`
-
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-### `npm test`
-
-Launches the test runner in interactive watch mode.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-## Customization
-
-### Colors
-
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
+```bash
+npm install
+npm start
 ```
 
-### Components
+Run tests:
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+```bash
+npm test
+```
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+Build for production:
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Environment Variables
 
-### Code Splitting
+Configure via `.env`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- REACT_APP_API_BASE: Base URL for API (preferred).
+- REACT_APP_BACKEND_URL: Fallback base URL if API_BASE is not set.
+- REACT_APP_FRONTEND_URL: Secondary fallback for API base.
+- REACT_APP_HEALTHCHECK_PATH: Optional; path to check backend health (default: `/health`). Set to `none` to disable.
+- REACT_APP_FEATURE_FLAGS: Optional; JSON string or comma-separated flags (e.g., `{"showFooter":true}` or `showFooter,experimental`).
+- REACT_APP_WS_URL, REACT_APP_NODE_ENV, REACT_APP_NEXT_TELEMETRY_DISABLED, REACT_APP_ENABLE_SOURCE_MAPS, REACT_APP_PORT, REACT_APP_TRUST_PROXY, REACT_APP_LOG_LEVEL, REACT_APP_EXPERIMENTS_ENABLED are available for advanced setups.
 
-### Analyzing the Bundle Size
+Note: Do not commit a `.env` with secrets. Provide these variables via deployment configuration.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## API Expectations
 
-### Making a Progressive Web App
+The UI expects these endpoints:
+- GET /books?q=&page=&pageSize= -> { items: [], total, page, pageSize }
+- GET /books/:id -> { id, title, author, year, description? }
+- GET /authors?q=&page=&pageSize= -> { items: [], total, page, pageSize }
+- GET /authors/:id -> { id, name, nationality?, bio? }
+- Optional: GET /health -> 200 OK for healthcheck
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+If the backend is unavailable, the UI renders empty states and shows a health banner (unless disabled).
 
-### Advanced Configuration
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- src/App.js: Router and layout
+- src/components: Navbar, Footer, SearchBar, BookCard, Paginator, HealthcheckBanner
+- src/pages: Home, Books, BookDetails, Authors, AuthorDetails, Services, NotFound
+- src/lib/api: client.js (fetch wrapper), books.js, authors.js
+- src/hooks: useQueryParams, useFeatureFlags
 
-### Deployment
+## Theming
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Theme variables defined in `src/App.css`. Supports light and dark modes (toggle in Navbar). Colors derived from Ocean Professional theme with subtle shadows and rounded corners.
 
-### `npm run build` fails to minify
+## Accessibility
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Skip-link to main content
+- Proper aria attributes on navigation and search
+- Focus ring and keyboard navigability
+
+## Notes
+
+- When integrating with a real backend, ensure CORS is configured appropriately if the API is on a different domain.
+- Healthcheck can be disabled by setting `REACT_APP_HEALTHCHECK_PATH=none`.
